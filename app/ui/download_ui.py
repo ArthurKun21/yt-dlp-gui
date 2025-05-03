@@ -18,7 +18,12 @@ class Ui_Download:
         Download.setWindowModality(Qt.WindowModality.NonModal)
         Download.resize(441, 73)
         icon = QIcon()
-        icon.addFile(":/icon/yt-dlp-gui.ico", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(
+            ":/icon/yt-dlp-gui.ico",
+            QSize(),
+            QIcon.Mode.Normal,
+            QIcon.State.Off,
+        )
         Download.setWindowIcon(icon)
         self.verticalLayout = QVBoxLayout(Download)
         self.verticalLayout.setObjectName("verticalLayout")
