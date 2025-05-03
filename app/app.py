@@ -53,10 +53,10 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
             self,
             "Application Message",
             f"Would you like to remove {item.text(0)} ?",
-            qtw.QMessageBox.Yes | qtw.QMessageBox.No,
-            qtw.QMessageBox.No,
+            qtw.QMessageBox.StandardButton.Yes | qtw.QMessageBox.StandardButton.No,
+            qtw.QMessageBox.StandardButton.No,
         )
-        if ret == qtw.QMessageBox.Yes:
+        if ret == qtw.QMessageBox.StandardButton.Yes:
             if self.to_dl.get(item.id):
                 logger.debug(f"Removing queued download ({item.id}): {item.text(0)}")
                 self.to_dl.pop(item.id)
