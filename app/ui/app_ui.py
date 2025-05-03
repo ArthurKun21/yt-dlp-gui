@@ -24,6 +24,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from ui import icons_rc  # noqa: F401
 
 
 class Ui_MainWindow:
