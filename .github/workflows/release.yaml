@@ -2,10 +2,6 @@ name: Release
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: "version"
-        required: false
 
 permissions:
   contents: write
@@ -34,11 +30,7 @@ jobs:
         working-directory: ./app
         shell: bash
         run: |
-          if [ -n "${{ github.event.inputs.version }}" ]; then
-            version=${{ github.event.inputs.version }}
-          else
-            version=$(git rev-parse --short HEAD)
-          fi
+          version=$(git rev-list --count HEAD)
           sed -i "s/^__version__.*/__version__ = \"$version\"/" ./app.py
 
       - name: Build application
