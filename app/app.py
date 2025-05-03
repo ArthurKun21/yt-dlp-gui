@@ -2,11 +2,12 @@ import logging
 import os
 import sys
 
+import toml
 from dep_dl import DownloadWindow
 from PySide6 import QtCore as qtc
 from PySide6 import QtWidgets as qtw
 from ui.app_ui import Ui_MainWindow
-from utils import *
+from utils import load_toml, root, save_toml
 from worker import Worker
 
 os.environ["PATH"] += os.pathsep + str(root / "bin")
@@ -226,7 +227,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
             qtw.QMessageBox.critical(
                 self,
                 "Application Message",
-                "The args key does not exist in the current preset and therefore it cannot be used.",
+                "The args key does not exist in the current preset and "
+                "therefore it cannot be used.",
             )
             self.dd_format.setCurrentIndex(-1)
             return
