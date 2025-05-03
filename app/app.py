@@ -72,7 +72,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
             self,
             "Select a folder",
             self.le_path.text() or qtc.QDir.homePath(),
-            qtw.QFileDialog.ShowDirsOnly,
+            qtw.QFileDialog.Option.ShowDirsOnly,
         )
 
         if path:
@@ -112,7 +112,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
             item.setTextAlignment(i, qtc.Qt.AlignmentFlag.AlignCenter)
             for i in range(1, 6)
         ]
-        item.id = self.index
+        item.setData(0, qtc.Qt.ItemDataRole.UserRole, self.index)
         self.le_link.clear()
 
         self.to_dl[self.index] = Worker(
@@ -127,7 +127,10 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.cb_thumbnail.isChecked(),
             self.cb_subtitles.isChecked(),
         )
-        logger.info(f"Queue download ({item.id}) added: {self.to_dl[self.index]}")
+        logger.info(
+            f"Queue download ({item.data(0, qtc.Qt.ItemDataRole.UserRole)}) "
+            f"added: {self.to_dl[self.index]}"
+        )
         self.index += 1
 
     def button_clear(self):
@@ -298,7 +301,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
                     item.setText(index, update)
                 else:
                     pb = self.tw.itemWidget(item, index)
-                    pb.setValue(round(float(update.replace("%", ""))))
+                    if isinstance(pb, qtw.QProgressBar):
+                        pb.setValue(round(float(update.replace("%", ""))))
         except AttributeError:
             logger.info(f"Download ({item.id}) no longer exists")
 
