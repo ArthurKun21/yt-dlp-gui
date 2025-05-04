@@ -63,6 +63,7 @@ jobs:
         with:
           activate-environment: true
           enable-cache: true
+          cache-suffix: ${{ matrix.runtime }}
 
       - name: Install dependencies ${{ matrix.runtime }}
         if: startsWith(matrix.os, 'windows')
