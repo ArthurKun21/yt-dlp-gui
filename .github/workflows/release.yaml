@@ -20,12 +20,18 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          activate-environment: true
+          enable-cache: true
+          cache-dependency-glob: "**/uv.lock"
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          pip install -U "https://yt-dlp.github.io/Pyinstaller-Builds/x86_64/pyinstaller-6.7.0-py3-none-any.whl"
+          uv sync
+          uv pip "https://yt-dlp.github.io/Pyinstaller-Builds/x86_64/pyinstaller-6.7.0-py3-none-any.whl"
 
       - name: Set version
         working-directory: ./app
@@ -39,7 +45,7 @@ jobs:
       - name: Build application
         working-directory: ./app
         run: |
-          pyinstaller --name=yt-dlp-gui --clean -y app.py --icon ./ui/assets/yt-dlp-gui.ico --add-data "config.toml;." --noconsole
+          uv run pyinstaller --name=yt-dlp-gui --clean -y app.py --icon ./ui/assets/yt-dlp-gui.ico --add-data "config.toml;." --noconsole
           Compress-Archive -Path dist/* -DestinationPath ./yt-dlp-gui-win64.zip
 
       - uses: actions/upload-artifact@v4
