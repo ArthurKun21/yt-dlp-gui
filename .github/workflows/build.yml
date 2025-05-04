@@ -76,7 +76,7 @@ jobs:
           uv sync --no-dev
           uv add pyinstaller==6.13.0
 
-      - name: Set version
+      - name: Set version windows
         if: startsWith(matrix.os, 'windows')
         working-directory: ./app
         shell: bash
@@ -86,7 +86,7 @@ jobs:
 
           echo "VERSION=$version" >> $GITHUB_ENV
 
-      - name: Set version
+      - name: Set version macOS
         if: startsWith(matrix.os, 'macOS')
         working-directory: ./app
         shell: bash
@@ -96,7 +96,7 @@ jobs:
 
           echo "VERSION=$version" >> $GITHUB_ENV
 
-      - name: Set version
+      - name: Set version ubuntu
         if: startsWith(matrix.os, 'ubuntu')
         working-directory: ./app
         shell: bash
