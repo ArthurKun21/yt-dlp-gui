@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+env:
+  QT_QPA_PLATFORM: offscreen
+
+jobs:
+  build-windows:
+    name: build-windows
+    runs-on: windows-latest
+    env:
+      VERSION: ""
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          activate-environment: true
+          enable-cache: true
+          cache-dependency-glob: "**/uv.lock"
+
+      - name: Install dependencies
+        run: |
+          uv sync
+          uv pip "https://yt-dlp.github.io/Pyinstaller-Builds/x86_64/pyinstaller-6.7.0-py3-none-any.whl"
+
+      - name: Set version
+        working-directory: ./app
+        shell: bash
+        run: |
+          version=$(git rev-list --count HEAD)
+          sed -i "s/^__version__.*/__version__ = \"$version\"/" ./app.py
+
+          echo "VERSION=$version" >> $GITHUB_ENV
+
+      - name: Build application
+        working-directory: ./app
+        run: |
+          uv run pyinstaller --name=yt-dlp-gui --clean -y app.py --icon ./ui/assets/yt-dlp-gui.ico --add-data "config.toml;." --noconsole
+          Compress-Archive -Path dist/* -DestinationPath ./yt-dlp-gui-win64.zip
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ github.event.inputs.version == '' }}
+        with:
+          name: yt-dlp-gui-win64
+          path: ./app/dist/
+
+      - name: Upload release
+        uses: actions/upload-artifact@v4
+        with:
+          name: yt-dlp-gui-win64--${{ github.run_number }}.zip
+          path: ./app/yt-dlp-gui-win64.zip
