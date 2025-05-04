@@ -14,9 +14,40 @@ env:
   QT_QPA_PLATFORM: offscreen
 
 jobs:
-  build-windows:
-    name: build-windows
-    runs-on: windows-latest
+  build:
+    strategy:
+      matrix:
+        runtime:
+          - linux-x64
+          - linux-armv7l
+          - linux-arm64
+          - win-x64
+          - win-arm64
+          - osx-x64
+          - osx-arm64
+        include:
+        - runtime: linux-x64
+          os: ubuntu-latest
+
+        - runtime: linux-armv7l
+          os: ubuntu-latest
+
+        - runtime: linux-arm64
+          os: ubuntu-latest
+
+        - runtime: osx-x64
+          os: macOS-latest
+
+        - runtime: osx-arm64
+          os: macOS-latest
+
+        - runtime: win-x64
+          os: windows-latest
+
+        - runtime: win-arm64
+          os: windows-latest
+
+    runs-on: ${{ matrix.os }}
     env:
       VERSION: ""
     steps:
@@ -26,16 +57,24 @@ jobs:
         with:
           python-version: "3.13"
 
-      - uses: astral-sh/setup-uv@v6
+      - name: Setup uv $${{ matrix.runtime }}
+        uses: astral-sh/setup-uv@v6
         with:
           activate-environment: true
           enable-cache: true
           cache-dependency-glob: "**/uv.lock"
 
-      - name: Install dependencies
+      - name: Install dependencies $${{ matrix.runtime }}
+        if: startsWith(matrix.os, 'windows')
         run: |
           uv sync --no-dev
           uv pip install "https://yt-dlp.github.io/Pyinstaller-Builds/x86_64/pyinstaller-6.7.0-py3-none-any.whl"
+
+      - name: Install dependencies $${{ matrix.runtime }}
+        if: startsWith(matrix.os, 'linux') || startsWith(matrix.os, 'osx')
+        run: |
+          uv sync --no-dev
+          uv add pyinstaller
 
       - name: Set version
         working-directory: ./app
@@ -46,20 +85,28 @@ jobs:
 
           echo "VERSION=$version" >> $GITHUB_ENV
 
-      - name: Build application
+      - name: Build application ${{ matrix.runtime }}
+        if: startsWith(matrix.os, 'windows')
         working-directory: ./app
         run: |
           uv run pyinstaller --name=yt-dlp-gui --clean -y app.py --icon ./ui/assets/yt-dlp-gui.ico --add-data "config.toml;." --noconsole
-          Compress-Archive -Path dist/* -DestinationPath ./yt-dlp-gui-win64.zip
+          Compress-Archive -Path dist/* -DestinationPath ./yt-dlp-gui-${{ matrix.runtime }}.zip
 
-      - uses: actions/upload-artifact@v4
-        if: ${{ github.event.inputs.version == '' }}
-        with:
-          name: yt-dlp-gui-win64-${{ github.run_number }}
-          path: ./app/dist/
+      - name: Build application ${{ matrix.runtime }}
+        if: startsWith(matrix.os, 'linux') || startsWith(matrix.os, 'osx')
+        working-directory: ./app
+        run: |
+          uv run pyinstaller --name=yt-dlp-gui --clean -y app.py --icon ./ui/assets/yt-dlp-gui.ico --add-data "config.toml:." --noconsole
+          zip -r yt-dlp-gui-${{ matrix.runtime }}.zip dist/*
 
-      - name: Upload release
+      - name: Upload artifact ${{ matrix.runtime }}
         uses: actions/upload-artifact@v4
         with:
-          name: yt-dlp-gui-win64-${{ github.run_number }}.zip
-          path: ./app/yt-dlp-gui-win64.zip
+          name: yt-dlp-gui-${{ matrix.runtime }}-${{ github.run_number }}
+          path: ./app/dist/
+
+      - name: Upload release ${{ matrix.runtime }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: yt-dlp-gui-${{ matrix.runtime }}-${{ github.run_number }}.zip
+          path: ./app/yt-dlp-gui-${{ matrix.runtime }}.zip
