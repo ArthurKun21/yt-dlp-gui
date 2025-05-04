@@ -58,7 +58,7 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Setup uv $${{ matrix.runtime }}
+      - name: Setup uv ${{ matrix.runtime }}
         uses: astral-sh/setup-uv@v6
         with:
           activate-environment: true
