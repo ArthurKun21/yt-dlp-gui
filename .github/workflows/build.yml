@@ -103,11 +103,11 @@ jobs:
       - name: Upload artifact ${{ matrix.runtime }}
         uses: actions/upload-artifact@v4
         with:
-          name: yt-dlp-gui-${{ matrix.runtime }}-${{ github.run_number }}
+          name: yt-dlp-gui-${{ matrix.runtime }}-Build-${{ github.run_number }}
           path: ./app/dist/
 
       - name: Upload release ${{ matrix.runtime }}
         uses: actions/upload-artifact@v4
         with:
-          name: yt-dlp-gui-${{ matrix.runtime }}-${{ github.run_number }}.zip
+          name: yt-dlp-gui-${{ matrix.runtime }}-Build-${{ github.run_number }}.zip
           path: ./app/yt-dlp-gui-${{ matrix.runtime }}.zip
