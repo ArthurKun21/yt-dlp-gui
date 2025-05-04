@@ -65,13 +65,13 @@ jobs:
           enable-cache: true
           cache-dependency-glob: "**/uv.lock"
 
-      - name: Install dependencies $${{ matrix.runtime }}
+      - name: Install dependencies ${{ matrix.runtime }}
         if: startsWith(matrix.os, 'windows')
         run: |
           uv sync --no-dev
           uv pip install "https://yt-dlp.github.io/Pyinstaller-Builds/x86_64/pyinstaller-6.7.0-py3-none-any.whl"
 
-      - name: Install dependencies $${{ matrix.runtime }}
+      - name: Install dependencies ${{ matrix.runtime }}
         if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
         run: |
           uv sync --no-dev
