@@ -31,7 +31,6 @@ jobs:
       - name: Install dependencies
         run: |
           uv sync --no-dev
-          uv pip install "https://yt-dlp.github.io/Pyinstaller-Builds/x86_64/pyinstaller-6.7.0-py3-none-any.whl"
 
       - name: Set version
         working-directory: ./app
