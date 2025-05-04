@@ -115,10 +115,17 @@ jobs:
           Compress-Archive -Path dist/* -DestinationPath ./yt-dlp-gui-${{ matrix.runtime }}.zip
 
       - name: Build application ${{ matrix.runtime }}
-        if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
+        if: startsWith(matrix.os, 'ubuntu')
         working-directory: ./app
         run: |
           uv run pyinstaller --name=yt-dlp-gui --clean -y app.py --icon ./ui/assets/yt-dlp-gui.ico --add-data "config.toml:." --noconsole
+          zip -r yt-dlp-gui-${{ matrix.runtime }}.zip dist/*
+
+      - name: Build application ${{ matrix.runtime }}
+        if: startsWith(matrix.os, 'macOS')
+        working-directory: ./app
+        run: |
+          uv run pyinstaller --name=yt-dlp-gui --clean -y app.py --icon ./ui/assets/yt-dlp-gui.icns --add-data "config.toml:." --noconsole
           zip -r yt-dlp-gui-${{ matrix.runtime }}.zip dist/*
 
       - name: Upload artifact ${{ matrix.runtime }}
