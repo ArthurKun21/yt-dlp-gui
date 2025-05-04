@@ -78,11 +78,22 @@ jobs:
           uv add pyinstaller
 
       - name: Set version
+        if: startsWith(matrix.os, 'windows')
         working-directory: ./app
         shell: bash
         run: |
           version=$(git rev-list --count HEAD)
           sed -i "s/^__version__.*/__version__ = \"$version\"/" ./app.py
+
+          echo "VERSION=$version" >> $GITHUB_ENV
+
+      - name: Set version
+        if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
+        working-directory: ./app
+        shell: bash
+        run: |
+          version=$(git rev-list --count HEAD)
+          sed -i '' "s/^__version__.*/__version__ = \"$version\"/" ./app.py
 
           echo "VERSION=$version" >> $GITHUB_ENV
 
