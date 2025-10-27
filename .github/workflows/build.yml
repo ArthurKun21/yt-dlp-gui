@@ -121,13 +121,13 @@ jobs:
           zip -r yt-dlp-gui-${{ matrix.runtime }}.zip dist/*
 
       - name: Upload artifact ${{ matrix.runtime }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: yt-dlp-gui-${{ matrix.runtime }}-Build-${{ github.run_number }}
           path: ./app/dist/
 
       - name: Upload release ${{ matrix.runtime }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: yt-dlp-gui-${{ matrix.runtime }}-Build-${{ github.run_number }}.zip
           path: ./app/yt-dlp-gui-${{ matrix.runtime }}.zip
