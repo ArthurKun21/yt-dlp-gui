@@ -47,7 +47,7 @@ jobs:
           uv run pyinstaller --name=yt-dlp-gui --clean -y app.py --icon ./ui/assets/yt-dlp-gui.ico --add-data "config.toml;." --noconsole
           Compress-Archive -Path dist/* -DestinationPath ./yt-dlp-gui-win64.zip
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: ${{ github.event.inputs.version == '' }}
         with:
           name: yt-dlp-gui-win64
